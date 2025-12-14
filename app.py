@@ -26,8 +26,8 @@ st.dataframe(df.head())
 # -------------------------
 # FEATURE SELECTION
 # -------------------------
-X = df[['age', 'mass', 'insu', 'plas']]
-y = df['class']
+X = df[['Age', 'Gender', 'BMI', 'Smoking','GeneticRisk','PhysicalActivity','AlcoholIntake','CancerHistory']]
+y = df['Diagnosis']
 
 # -------------------------
 # TRAIN MODEL
