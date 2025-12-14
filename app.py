@@ -5,9 +5,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 # -------------------------
-# APP CONFIG
+# PAGE CONFIG
 # -------------------------
-st.set_page_config(page_title="Cancer Prediction", layout="wide")
+st.set_page_config(page_title="Cancer Prediction App", layout="wide")
+
 st.title("🩺 Cancer Prediction App")
 st.write("Logistic Regression based Cancer Prediction")
 
@@ -17,7 +18,6 @@ st.write("Logistic Regression based Cancer Prediction")
 @st.cache_data
 def load_data():
     df = pd.read_csv("The_Cancer_data_1500_V2.csv")
-    # normalize column names (THIS FIXES YOUR ERROR)
     df.columns = df.columns.str.lower().str.strip()
     return df
 
@@ -27,18 +27,19 @@ st.subheader("Dataset Preview")
 st.dataframe(df.head())
 
 # -------------------------
-# DEFINE FEATURES (MATCH DATASET)
+# FEATURES & TARGET (MATCH DATASET)
 # -------------------------
-features = ['age', 'mass', 'insu', 'plas']
+features = [
+    'age',
+    'bmi',
+    'physicalactivity',
+    'alcoholintake'
+]
 
-# safety check
-missing = [col for col in features if col not in df.columns]
-if missing:
-    st.error(f"Missing columns in dataset: {missing}")
-    st.stop()
+target = 'diagnosis'
 
 X = df[features]
-y = df['class']
+y = df[target]
 
 # -------------------------
 # TRAIN MODEL
@@ -62,16 +63,16 @@ st.success(f"Model Accuracy: {accuracy:.2f}")
 st.sidebar.header("Enter Patient Details")
 
 age = st.sidebar.number_input("Age", 0, 120, 30)
-mass = st.sidebar.number_input("Mass", 0.0, 100.0, 25.0)
-insu = st.sidebar.number_input("Insulin Level", 0.0, 300.0, 80.0)
-plas = st.sidebar.number_input("Plasma Level", 0.0, 300.0, 120.0)
+bmi = st.sidebar.number_input("BMI", 10.0, 60.0, 25.0)
+physicalactivity = st.sidebar.number_input("Physical Activity Level", 0.0, 20.0, 5.0)
+alcoholintake = st.sidebar.number_input("Alcohol Intake Level", 0.0, 20.0, 4.0)
 
 # -------------------------
 # PREDICTION
 # -------------------------
 if st.sidebar.button("Predict"):
     input_df = pd.DataFrame(
-        [[age, mass, insu, plas]],
+        [[age, bmi, physicalactivity, alcoholintake]],
         columns=features
     )
 
