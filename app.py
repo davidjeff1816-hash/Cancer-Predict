@@ -5,18 +5,19 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 # -------------------------
-# APP TITLE
+# APP CONFIG
 # -------------------------
+st.set_page_config(page_title="Cancer Prediction", layout="wide")
+
 st.title("🩺 Cancer Prediction App")
-st.write("Logistic Regression based cancer prediction")
+st.write("Logistic Regression based Cancer Prediction")
 
 # -------------------------
 # LOAD DATA
 # -------------------------
 @st.cache_data
 def load_data():
-    data = pd.read_csv("The_Cancer_data_1500_V2.csv")
-    return data
+    return pd.read_csv("The_Cancer_data_1500_V2.csv")
 
 df = load_data()
 
@@ -24,10 +25,11 @@ st.subheader("Dataset Preview")
 st.dataframe(df.head())
 
 # -------------------------
-# FEATURE SELECTION
+# FEATURE SELECTION (MATCHES PREDICTION)
 # -------------------------
-X = df[['Age', 'Gender', 'BMI', 'Smoking','GeneticRisk','PhysicalActivity','AlcoholIntake','CancerHistory']]
-y = df['Diagnosis']
+features = ['age', 'mass', 'insu', 'plas']
+X = df[features]
+y = df['class']
 
 # -------------------------
 # TRAIN MODEL
@@ -48,7 +50,7 @@ accuracy = accuracy_score(y_test, y_pred)
 st.success(f"Model Accuracy: {accuracy:.2f}")
 
 # -------------------------
-# USER INPUT
+# SIDEBAR INPUT
 # -------------------------
 st.sidebar.header("Enter Patient Details")
 
@@ -61,7 +63,11 @@ plas = st.sidebar.number_input("Plasma Level", min_value=0.0, value=120.0)
 # PREDICTION
 # -------------------------
 if st.sidebar.button("Predict"):
-    input_data = [[age, mass, insu, plas]]
+    input_data = pd.DataFrame(
+        [[age, mass, insu, plas]],
+        columns=features
+    )
+
     prediction = model.predict(input_data)
 
     if prediction[0] == 1:
